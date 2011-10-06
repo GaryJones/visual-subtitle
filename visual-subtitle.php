@@ -1,18 +1,20 @@
 <?php
 /**
- * Visual Subtitle plugin
+ * Visual Subtitle plugin. Add a subtitle or tagline to each post type that has a title.
  *
  * Allows part of a post title to be styled as a subtitle. The subtitle is still
  * within the title level 1 or 2 heading, but is wrapped in a span to be styled
  * differently.
  *
- * @package Visual Subtitle
- * @author Gary Jones
- * @license GPL3
+ * @package VisualSubtitle
+ * @author  Gary Jones
+ * @license http://www.opensource.org/licenses/gpl-license.php GPLv2 or later
+ * @link    http://code.garyjones.co.uk/plugins/visual-subtitle/
  * @version 1.0.1
  *
+ * @wordpress
  * Plugin Name: Visual Subtitle
- * Plugin URI: http://garyjones.co.uk/
+ * Plugin URI: http://code.garyjones.co.uk/plugins/visual-subtitle/
  * Description: Allows part of a post title to be styled as a subtitle. The subtitle is still within the title level 1 or 2 heading, but is wrapped in a <code>span</code> to be styled differently.
  * Version: 1.0.1
  * Author: Gary Jones
@@ -21,9 +23,10 @@
  */
 
 /**
- * Plugin class for Visual Subtitle
+ * Plugin class for Visual Subtitle plugin.
  *
  * @package VisualSubtitle
+ * @author  Gary Jones
  */
 class Visual_Subtitle {
 
@@ -66,9 +69,10 @@ class Visual_Subtitle {
 	var $nonce = 'visual_subtitle_noncename';
 
 	/**
-	 * Constructor.
+	 * Adds a reference of this object to $instance, make plugin translatable,
+	 * hook in the init() method.
 	 *
-	 * @since 1.0
+	 * @since 1.0.0
 	 */
 	public function __construct() {
 
@@ -76,13 +80,35 @@ class Visual_Subtitle {
 		if( ! load_plugin_textdomain( $this->domain, false, '/wp-content/languages/' ) )
 			load_plugin_textdomain( $this->domain, false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 
-		add_action( 'admin_init', array( &$this, 'add' ) );
-		add_action( 'save_post', array( &$this, 'save' ), 1, 2 );
+		/** Announce that the class is ready, and pass the object (for advanced use) */
+		do_action_ref_array( 'visual_subtitle_init', array( &$this ) );
+
+		add_action( 'init', array( &$this, 'init' ) );
+
+	}
+
+	/**
+	 * Hook in action and filter interactions.
+	 *
+	 * @since 1.0.2
+	 *
+	 * @see Visual_Subtitle::add()
+	 * @see Visual_Subtitle::save()
+	 * @see Visual_Subtitle::quick_edit()
+	 * @see Visual_Subtitle::style()
+	 * @see Visual_Subtitle::quick_edit_javascript()
+	 * @see Visual_Subtitle::filter()
+	 * @see Visual_Subtitle::doctitle_filter()
+	 */
+	public function init() {
+
+		add_action( 'admin_init',            array( &$this, 'add' ) );
+		add_action( 'save_post',             array( &$this, 'save' ), 1, 2 );
 		add_action( 'quick_edit_custom_box', array( &$this, 'quick_edit' ), 10, 2 );
-		add_action( 'admin_head', array( &$this, 'style' ) );
-		add_action( 'admin_footer', array( &$this, 'quick_edit_javascript' ) );
-		add_filter( 'the_title', array( &$this, 'filter' ), 10, 2 );
-		add_filter( 'wp_title', array( &$this, 'doctitle_filter' ), 10, 3 );
+		add_action( 'admin_head',            array( &$this, 'style' ) );
+		add_action( 'admin_footer',          array( &$this, 'quick_edit_javascript' ) );
+		add_filter( 'the_title',             array( &$this, 'filter' ), 10, 2 );
+		add_filter( 'wp_title',              array( &$this, 'doctitle_filter' ), 10, 3 );
 
 	}
 
@@ -91,16 +117,25 @@ class Visual_Subtitle {
 	 *
 	 * Also adds a filter reference for each post type, since we're looping through them.
 	 *
-	 * @since 1.0
+	 * @since 1.0.0
 	 */
 	function add() {
 
 		foreach ( get_post_types() as $post_type ) {
 			if( post_type_supports( $post_type, 'title' ) ) {
-				add_meta_box('visual-subtitle', __( 'Visual Subtitle', $this->domain ), array( &$this, 'field' ), $post_type, 'normal', 'high' );
-				add_filter( 'manage_posts_columns', array( &$this, 'columns' ) );
+				add_meta_box(
+						'visual-subtitle',
+						__( 'Visual Subtitle', $this->domain ),
+						array( &$this, 'field' ),
+						$post_type,
+						'normal',
+						'high'
+				);
+				// Posts
+				add_filter( 'manage_posts_columns',       array( &$this, 'columns' ) );
 				add_filter( 'manage_posts_custom_column', array( &$this, 'custom_column' ), 10, 2 );
-				add_filter( 'manage_pages_columns', array( &$this, 'columns' ) );
+				// Pages
+				add_filter( 'manage_pages_columns',       array( &$this, 'columns' ) );
 				add_filter( 'manage_pages_custom_column', array( &$this, 'custom_column' ), 10, 2 );
 			}
 		}
@@ -110,7 +145,7 @@ class Visual_Subtitle {
 	/**
 	 * Echos the contents of the Visual Subtitle meta box.
 	 *
-	 * @since 1.0
+	 * @since 1.0.0
 	 *
 	 * @global stdClass $post
 	 */
@@ -132,7 +167,7 @@ class Visual_Subtitle {
 	/**
 	 * Save the visual subtitle value if authorised to.
 	 *
-	 * @since 1.0
+	 * @since 1.0.0
 	 *
 	 * @param string $post_id
 	 * @param stdClass $post
@@ -168,7 +203,7 @@ class Visual_Subtitle {
 	 * Quick Edit Custom Box action only works if there are custom columns, so
 	 * this is needed, even though we visually hide the tabular column.
 	 *
-	 * @since 1.0
+	 * @since 1.0.0
 	 *
 	 * @param array $columns
 	 * @return array
@@ -186,6 +221,8 @@ class Visual_Subtitle {
 	 * We echo out the subtitle value, wrapped in an element so it can be grabbed
 	 * by JavaScript later on. The column which would show this value is visually
 	 * hidden.
+	 *
+	 * @since 1.0.0
 	 *
 	 * @param string $name Column name
 	 * @param integer $id Post ID
@@ -205,7 +242,7 @@ class Visual_Subtitle {
 	 *
 	 * This column was only added so we could fire the quick edit custom box.
 	 *
-	 * @since 1.0
+	 * @since 1.0.0
 	 */
 	function style() {
 
@@ -216,7 +253,7 @@ class Visual_Subtitle {
 	/**
 	 * Echo output into the Quick Edit feature.
 	 *
-	 * @since 1.0
+	 * @since 1.0.0
 	 *
 	 * @global stdClass $post
 	 * @param string $column_name
@@ -243,11 +280,14 @@ class Visual_Subtitle {
 			</div>
 		</fieldset>
 		<?php
+
 	}
 
 	/**
 	 * Add JavaScript that populates the quick edit subtitle box from the hidden
 	 * subtitle column value.
+	 *
+	 * @since 1.0.0
 	 *
 	 * @global string $current_screen
 	 * @return null Returns null if the screen is not an edit page.
@@ -277,7 +317,7 @@ class Visual_Subtitle {
 	/**
 	 * Filter the post title on the Posts screen, and on the front-end.
 	 *
-	 * @since 1.0
+	 * @since 1.0.0
 	 *
 	 * @global string $current_screen
 	 * @param string $title
@@ -299,7 +339,7 @@ class Visual_Subtitle {
 			/* Don't add the subtitle in - also, don't split by |, as it looks bad with the underlined link */
 			$title = $title; /* Yes, redundant code - bite me */
 		else
-			$title = $title . '<span class="subtitle">' . $subtitle . '</span>';
+			$title = $title . ' <span class="subtitle">' . $subtitle . '</span>';
 
 		return $title;
 
@@ -308,7 +348,7 @@ class Visual_Subtitle {
 	/**
 	 * Filter the document title in the head.
 	 *
-	 * @since 1.0
+	 * @since 1.0.0
 	 *
 	 * @global stdClass $post
 	 * @param string $title

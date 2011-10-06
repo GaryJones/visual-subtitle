@@ -3,7 +3,7 @@ Contributors: GaryJ
 Donate link: http://code.garyjones.co.uk/donate/
 Tags: subtitle
 Requires at least: 3.1
-Tested up to: 3.2
+Tested up to: 3.2.1
 Stable tag: 1.0.1
 
 Allows part of a post title to be styled as a subtitle. It is still within the title heading, but is wrapped in a span to be styled differently.
