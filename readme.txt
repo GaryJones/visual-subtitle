@@ -23,7 +23,7 @@ If you're using a theme or plugin that allows for custom document titles differe
 
 == Installation ==
 
-1. Unzip and upload `geoplugin-currency-shortcode` folder to the `/wp-content/plugins/` directory
+1. Unzip and upload `visual-subtitle` folder to the `/wp-content/plugins/` directory
 1. Activate the plugin through the 'Plugins' menu in WordPress
 
 == Frequently Asked Questions ==
