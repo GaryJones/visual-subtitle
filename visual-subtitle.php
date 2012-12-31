@@ -1,25 +1,22 @@
 <?php
 /**
- * Visual Subtitle plugin. Add a subtitle or tagline to each post type that has a title.
+ * Visual Subtitle plugin.
  *
- * Allows part of a post title to be styled as a subtitle. The subtitle is still
- * within the title level 1 or 2 heading, but is wrapped in a span to be styled
- * differently.
- *
- * @package VisualSubtitle
- * @author  Gary Jones
- * @license http://www.opensource.org/licenses/gpl-license.php GPLv2 or later
+ * @package GaryJones\VisualSubtitle
+ * @author  Gary Jones <gary@garyjones.co.uk>
+ * @license GPL-2.0+
  * @link    http://code.garyjones.co.uk/plugins/visual-subtitle/
  * @version 1.0.1
  *
- * @wordpress
+ * @wordpress-plugin
  * Plugin Name: Visual Subtitle
  * Plugin URI: http://code.garyjones.co.uk/plugins/visual-subtitle/
  * Description: Allows part of a post title to be styled as a subtitle. The subtitle is still within the title level 1 or 2 heading, but is wrapped in a <code>span</code> to be styled differently.
  * Version: 1.0.1
  * Author: Gary Jones
  * Author URI: http://garyjones.co.uk/
- * License: GPL3
+ * License: GPL-2.0+
+ * Text Domain: visual-subtitle
  */
 
 /**
@@ -33,7 +30,8 @@ class Visual_Subtitle {
 	/**
 	 * Holds copy of instance, so other plugins can remove our hooks.
 	 *
-	 * @since 1.0
+	 * @since 1.0.0
+	 *
 	 * @link http://core.trac.wordpress.org/attachment/ticket/16149/query-standard-format-posts.php
 	 * @link http://twitter.com/#!/markjaquith/status/66862769030438912
 	 *
@@ -44,29 +42,20 @@ class Visual_Subtitle {
 	/**
 	 * The name of the meta field key to which the postmeta is saved.
 	 *
-	 * @since 1.0
+	 * @since 1.0.0
 	 *
 	 * @var string
 	 */
-	var $meta_field = '_visual-subtitle';
-
-	/**
-	 * The translation gettext domain for this plugin.
-	 *
-	 * @since 1.0
-	 *
-	 * @var string
-	 */
-	var $domain = 'visual_subtitle';
+	protected $meta_field = '_visual-subtitle';
 
 	/**
 	 * The name of the nonce.
 	 *
-	 * @since 1.0
+	 * @since 1.0.0
 	 *
 	 * @var string
 	 */
-	var $nonce = 'visual_subtitle_noncename';
+	protected $nonce = 'visual_subtitle_noncename';
 
 	/**
 	 * Adds a reference of this object to $instance, make plugin translatable,
@@ -75,22 +64,32 @@ class Visual_Subtitle {
 	 * @since 1.0.0
 	 */
 	public function __construct() {
-
 		self::$instance = $this;
-		if( ! load_plugin_textdomain( $this->domain, false, '/wp-content/languages/' ) )
-			load_plugin_textdomain( $this->domain, false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 
 		/** Announce that the class is ready, and pass the object (for advanced use) */
 		do_action_ref_array( 'visual_subtitle_init', array( &$this ) );
 
-		add_action( 'init', array( &$this, 'init' ) );
+		add_action( 'init', array( $this, 'localization' ) );
+		add_action( 'init', array( $this, 'init' ) );
+	}
 
+	/**
+	 * Support localization.
+	 *
+	 * @since 1.1.0
+	 */
+	public function localization() {
+		$domain = 'visual-subtitle';
+		// The "plugin_locale" filter is also used in load_plugin_textdomain()
+		$locale = apply_filters( 'plugin_locale', get_locale(), $domain );
+		load_textdomain( $domain, WP_LANG_DIR . '/visual-subtitle/' . $domain . '-' . $locale . '.mo' );
+		load_plugin_textdomain( $domain, false, plugin_dir_path( __FILE__ ) . 'languages/' );
 	}
 
 	/**
 	 * Hook in action and filter interactions.
 	 *
-	 * @since 1.0.2
+	 * @since 1.1.0
 	 *
 	 * @see Visual_Subtitle::add()
 	 * @see Visual_Subtitle::save()
@@ -101,15 +100,17 @@ class Visual_Subtitle {
 	 * @see Visual_Subtitle::doctitle_filter()
 	 */
 	public function init() {
-
-		add_action( 'admin_init',            array( &$this, 'add' ) );
-		add_action( 'save_post',             array( &$this, 'save' ), 1, 2 );
-		add_action( 'quick_edit_custom_box', array( &$this, 'quick_edit' ), 10, 2 );
-		add_action( 'admin_head',            array( &$this, 'style' ) );
-		add_action( 'admin_footer',          array( &$this, 'quick_edit_javascript' ) );
-		add_filter( 'the_title',             array( &$this, 'filter' ), 10, 2 );
-		add_filter( 'wp_title',              array( &$this, 'doctitle_filter' ), 10, 3 );
-
+		//if( post_type_supports( get_post_type(), 'title' ) ) {
+			add_action( 'edit_form_after_title', array( $this, 'field' ) );
+		//}
+		add_action( 'admin_init',             array( $this, 'add_field' ) );
+		add_action( 'save_post',              array( $this, 'save' ), 1, 2 );
+		add_action( 'quick_edit_custom_box',  array( $this, 'quick_edit' ), 10, 2 );
+		add_action( 'admin_footer',           array( $this, 'quick_edit_javascript' ) );
+		add_filter( 'the_title',              array( $this, 'filter' ), 10, 2 );
+		add_filter( 'wp_title',               array( $this, 'doctitle_filter' ), 10, 3 );
+		add_action( 'admin_enqueue_scripts',  array( $this, 'script' ) );
+		add_action( 'admin_enqueue_scripts',  array( $this, 'style' ) );
 	}
 
 	/**
@@ -119,27 +120,25 @@ class Visual_Subtitle {
 	 *
 	 * @since 1.0.0
 	 */
-	function add() {
-
+	public function add_field() {
 		foreach ( get_post_types() as $post_type ) {
 			if( post_type_supports( $post_type, 'title' ) ) {
-				add_meta_box(
-						'visual-subtitle',
-						__( 'Visual Subtitle', $this->domain ),
-						array( &$this, 'field' ),
-						$post_type,
-						'normal',
-						'high'
-				);
+//				add_meta_box(
+//						'visual-subtitle',
+//						__( 'Visual Subtitle', 'visual-subtitle' ),
+//						array( $this, 'field' ),
+//						$post_type,
+//						'normal',
+//						'high'
+//				);
 				// Posts
-				add_filter( 'manage_posts_columns',       array( &$this, 'columns' ) );
-				add_filter( 'manage_posts_custom_column', array( &$this, 'custom_column' ), 10, 2 );
+				add_filter( 'manage_posts_columns',       array( $this, 'columns' ) );
+				add_filter( 'manage_posts_custom_column', array( $this, 'custom_column' ), 10, 2 );
 				// Pages
-				add_filter( 'manage_pages_columns',       array( &$this, 'columns' ) );
-				add_filter( 'manage_pages_custom_column', array( &$this, 'custom_column' ), 10, 2 );
+				add_filter( 'manage_pages_columns',       array( $this, 'columns' ) );
+				add_filter( 'manage_pages_custom_column', array( $this, 'custom_column' ), 10, 2 );
 			}
 		}
-
 	}
 
 	/**
@@ -147,21 +146,30 @@ class Visual_Subtitle {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @global stdClass $post
+	 * @global WP_Post $post
 	 */
-	function field() {
-
+	public function field() {
 		global $post;
 
 		$value = get_post_meta( $post->ID, $this->meta_field, true );
-
-		wp_nonce_field( plugin_basename( __FILE__ ), $this->nonce );
 		?>
-		<label class="screen-reader-text" for="visual-subtitle" id="visual-subtitle-label"><?php _e( 'Visual Subtitle', $this->domain ); ?></label>
-		<input type="text" id="visual-subtitle" name="<?php echo $this->meta_field; ?>" class="large-text" value="<?php echo $value; ?>" aria-labelledby="visual-subtitle-label" />
-		<span class="description"><?php sprintf( __( 'This is still part of the post heading, but is wrapped in %s tags for you to style.', $this->domain ), '<code>&lt;span&gt;</code>'); ?></span>
+		<div class="visual-subtitle-wrap">
+			<?php
+			wp_nonce_field( plugin_basename( __FILE__ ), $this->nonce );
+			?>
+			<label class="screen-reader-text" for="visual-subtitle" id="visual-subtitle-prompt-text"><?php _e( 'Enter visual subtitle here', 'visual-subtitle' ); ?></label>
+			<input type="text" id="visual-subtitle" name="<?php echo $this->meta_field; ?>" class="large-text" value="<?php esc_attr_e( $value ); ?>" aria-labelledby="visual-subtitle-prompt-text" />
+			<span class="description"><?php sprintf( __( 'This is still part of the post heading, but may be wrapped in %s tags for you to style.', 'visual-subtitle' ), '<code>&lt;span&gt;</code>'); ?></span>
+		</div>
 		<?php
+	}
 
+	public function script() {
+		wp_enqueue_script( 'visual-subtitle', plugin_dir_url(__FILE__) .'js/visual-subtitle.js', array( 'jquery', 'post' ), '1.1.0', true );
+	}
+
+	public function style() {
+		wp_enqueue_style( 'visual-subtitle', plugin_dir_url(__FILE__) .'css/visual-subtitle.css', array(), '1.1.0' );
 	}
 
 	/**
@@ -210,7 +218,7 @@ class Visual_Subtitle {
 	 */
 	function columns( $columns ) {
 
-		$columns['visual-subtitle'] = __( 'Subtitle', $this->domain );
+		$columns['visual-subtitle'] = __( 'Subtitle', 'visual-subtitle' );
 		return $columns;
 
 	}
@@ -238,19 +246,6 @@ class Visual_Subtitle {
 	}
 
 	/**
-	 * Add simple style to hide the Subtitle tabular column.
-	 *
-	 * This column was only added so we could fire the quick edit custom box.
-	 *
-	 * @since 1.0.0
-	 */
-	function style() {
-
-		?><style type="text/css">.column-visual-subtitle {display: none;}</style><?php
-
-	}
-
-	/**
 	 * Echo output into the Quick Edit feature.
 	 *
 	 * @since 1.0.0
@@ -272,7 +267,7 @@ class Visual_Subtitle {
 			<div class="inline-edit-col">
 				<?php wp_nonce_field( plugin_basename( __FILE__ ), $this->nonce ); ?>
 				<label>
-					<span class="title"><?php _e( 'Subtitle', $this->domain ); ?></span>
+					<span class="title"><?php _e( 'Subtitle', 'visual-subtitle' ); ?></span>
 					<span class="input-text-wrap">
 						<input type="text" id="post_subtitle" name="_visual-subtitle" value="<?php esc_attr_e( get_post_meta( $post->ID, $this->meta_field, true ) ); ?>" />
 					</span>
