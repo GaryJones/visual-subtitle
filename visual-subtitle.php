@@ -17,6 +17,7 @@
  * Author URI: http://garyjones.co.uk/
  * License: GPL-2.0+
  * Text Domain: visual-subtitle
+ * Domain Path: /languages/
  */
 
 /**
@@ -79,11 +80,10 @@ class Visual_Subtitle {
 	 * @since 1.1.0
 	 */
 	public function localization() {
-		$domain = 'visual-subtitle';
 		// The "plugin_locale" filter is also used in load_plugin_textdomain()
-		$locale = apply_filters( 'plugin_locale', get_locale(), $domain );
-		load_textdomain( $domain, WP_LANG_DIR . '/visual-subtitle/' . $domain . '-' . $locale . '.mo' );
-		load_plugin_textdomain( $domain, false, plugin_dir_path( __FILE__ ) . 'languages/' );
+		$locale = apply_filters( 'plugin_locale', get_locale(), 'visual-subtitle' );
+		load_textdomain( 'visual-subtitle', WP_LANG_DIR . '/visual-subtitle/visual-subtitle-' . $locale . '.mo' );
+		load_plugin_textdomain( 'visual-subtitle', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 	}
 
 	/**
@@ -94,6 +94,7 @@ class Visual_Subtitle {
 	 * @see Visual_Subtitle::add()
 	 * @see Visual_Subtitle::save()
 	 * @see Visual_Subtitle::quick_edit()
+	 * @see Visual_Subtitle::script()
 	 * @see Visual_Subtitle::style()
 	 * @see Visual_Subtitle::quick_edit_javascript()
 	 * @see Visual_Subtitle::filter()
@@ -106,7 +107,6 @@ class Visual_Subtitle {
 		add_action( 'admin_init',             array( $this, 'add_field' ) );
 		add_action( 'save_post',              array( $this, 'save' ), 1, 2 );
 		add_action( 'quick_edit_custom_box',  array( $this, 'quick_edit' ), 10, 2 );
-		add_action( 'admin_footer',           array( $this, 'quick_edit_javascript' ) );
 		add_filter( 'the_title',              array( $this, 'filter' ), 10, 2 );
 		add_filter( 'wp_title',               array( $this, 'doctitle_filter' ), 10, 3 );
 		add_action( 'admin_enqueue_scripts',  array( $this, 'script' ) );
@@ -123,14 +123,6 @@ class Visual_Subtitle {
 	public function add_field() {
 		foreach ( get_post_types() as $post_type ) {
 			if( post_type_supports( $post_type, 'title' ) ) {
-//				add_meta_box(
-//						'visual-subtitle',
-//						__( 'Visual Subtitle', 'visual-subtitle' ),
-//						array( $this, 'field' ),
-//						$post_type,
-//						'normal',
-//						'high'
-//				);
 				// Posts
 				add_filter( 'manage_posts_columns',       array( $this, 'columns' ) );
 				add_filter( 'manage_posts_custom_column', array( $this, 'custom_column' ), 10, 2 );
@@ -164,10 +156,29 @@ class Visual_Subtitle {
 		<?php
 	}
 
+	/**
+	 * Enqueue script file.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @todo Limit to Edit screen, or index screen
+	 */
 	public function script() {
+//		global $current_screen;
+//
+//		if ( ($current_screen->base != 'edit') )
+//			return;
+
 		wp_enqueue_script( 'visual-subtitle', plugin_dir_url(__FILE__) .'js/visual-subtitle.js', array( 'jquery', 'post' ), '1.1.0', true );
 	}
 
+	/**
+	 * Enqueue style file.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @todo Limit to just the screens that need styles.
+	 */
 	public function style() {
 		wp_enqueue_style( 'visual-subtitle', plugin_dir_url(__FILE__) .'css/visual-subtitle.css', array(), '1.1.0' );
 	}
@@ -177,8 +188,9 @@ class Visual_Subtitle {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string $post_id
-	 * @param stdClass $post
+	 * @param string  $post_id
+	 * @param WP_Post $post
+	 *
 	 * @return integer
 	 */
 	function save( $post_id, $post ) {
@@ -209,12 +221,13 @@ class Visual_Subtitle {
 	 * Add a custom column.
 	 *
 	 * Quick Edit Custom Box action only works if there are custom columns, so
-	 * this is needed, even though we visually hide the tabular column.
+	 * this is needed, even though we visually hide the tabular column with CSS.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param array $columns
-	 * @return array
+	 * @param array $columns Existing post / page columns.
+	 *
+	 * @return array Amended post / page coulumns.
 	 */
 	function columns( $columns ) {
 
@@ -232,9 +245,10 @@ class Visual_Subtitle {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string $name Column name
+	 * @param string  $name Column name.
 	 * @param integer $id Post ID
-	 * @return null Returns null if the column name is incorrect
+	 *
+	 * @return null Returns early if the column name is incorrect.
 	 */
 	function custom_column( $name, $id ) {
 
@@ -251,9 +265,11 @@ class Visual_Subtitle {
 	 * @since 1.0.0
 	 *
 	 * @global stdClass $post
+	 *
 	 * @param string $column_name
 	 * @param string $post_type
-	 * @return null Returns null if the column name is incorrect
+	 *
+	 * @return null Returns early if the column name is incorrect
 	 */
 	function quick_edit( $column_name, $post_type ) {
 
@@ -328,7 +344,7 @@ class Visual_Subtitle {
 		if ( ! $subtitle )
 			return $title;
 
-		if ( is_admin() && 'edit' == $current_screen->base )
+		if ( is_admin() && ( 'edit' == $current_screen->base || defined( 'DOING_AJAX' ) && DOING_AJAX ) )
 			$title = $title . ' | ' . $subtitle;
 		elseif ( is_admin() && 'edit-comments' == $current_screen->base )
 			/* Don't add the subtitle in - also, don't split by |, as it looks bad with the underlined link */

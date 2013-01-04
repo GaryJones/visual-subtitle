@@ -2,8 +2,8 @@
 Contributors: GaryJ
 Donate link: http://code.garyjones.co.uk/donate/
 Tags: subtitle
-Requires at least: 3.1
-Tested up to: 3.2.1
+Requires at least: 3.5
+Tested up to: 3.5
 Stable tag: 1.0.1
 
 Allows part of a post title to be styled as a subtitle. It is still within the title heading, but is wrapped in a span to be styled differently.
@@ -19,12 +19,11 @@ It allows you to include a string of text that will still be part of the post ti
 Keeping it as part of the main level 1 or two heading, means it maintains as much keyword SEO importance as the main title, yet can be given a style (in your own theme) of `display: block;` to make it visually appear as a subtitle.
 
 The visual subtitle is appended to to the title on on the Posts screen, separated with a pipe (`|`) character, and appended to the title part of the document title with a colon (`:`) character.
-If you're using a theme or plugin that allows for custom document titles different to the post title
 
 == Installation ==
 
-1. Unzip and upload `visual-subtitle` folder to the `/wp-content/plugins/` directory
-1. Activate the plugin through the 'Plugins' menu in WordPress
+1. Unzip and upload `visual-subtitle` folder to the `/wp-content/plugins/` directory.
+1. Activate the plugin through the 'Plugins' menu in WordPress.
 
 == Frequently Asked Questions ==
 
