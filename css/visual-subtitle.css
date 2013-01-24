@@ -1,0 +1,17 @@
+.visual-subtitle-wrap {
+	padding: 0 0 10px;
+	font-size: 1.7em;
+}
+.visual-subtitle-wrap label {
+	color: #bbb;
+	cursor: text;
+	position: absolute;
+	/*font-size: 1.7em;*/
+	padding: 8px 10px;
+}
+.visual-subtitle-wrap input {
+	width: 100%;
+}
+.column-visual-subtitle {
+	display: none;
+}
