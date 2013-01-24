@@ -32,7 +32,7 @@ Then go to your Plugins screen and click __Activate__.
 
 This plugin adds a Visual Subtitle field to all post, page and custom post types that have support for a title.
 
-In a future version, this plugin may include a user interface with a list of checkboxes, so users can deselect which post type visual subtitle is applied to.
+In a future version, this plugin may include a user interface with a list of checkboxes, so users can deselect which post types visual subtitle is applied to.
 
 Those comfortable with code can filter the indexed array of post types via the `visual_subtitle_supported_types` filter.
 
@@ -42,31 +42,31 @@ The plugin allows you to include a string of text that will still be part of the
 
 Keeping it as part of the main level 1 or two heading, means it maintains as much keyword SEO importance as the main title, yet can be given a style (in your own theme) of `display: block;` to make it visually appear as a subtitle.
 
-The visual subtitle is appended to to the title on on the Posts screen, with the markup `<small class="visual-subtitle">...</small>`, and appended to the title part of the document title with a filterable colon and space (`: `) characters.
+The visual subtitle is appended to to the title on on the Posts screen, with a ` | ` separator, and appended to the title part of the document title with a filterable colon and space (`: `) separator.
 
 ## Screenshots
 
-![The back-end interface, showing the Visual Subtitle field.](https://raw.github.com/GaryJones/Visual-Subtitle/master/screenshot-1.png)  
+![The back-end interface, showing the Visual Subtitle field.](https://raw.github.com/GaryJones/Visual-Subtitle/master/assets-wp-repo/screenshot-1.png)  
 _The back-end interface, showing the Visual Subtitle field._
 
 ---
 
-![Showing the visual subtitle on the front-end, in this case, styled red, smaller, italic and bold.](https://raw.github.com/GaryJones/Visual-Subtitle/master/screenshot-2.png)  
+![Showing the visual subtitle on the front-end, in this case, styled red, smaller, italic and bold.](https://raw.github.com/GaryJones/Visual-Subtitle/master/assets-wp-repo/screenshot-2.png)  
 _Showing the visual subtitle on the front-end, in this case, styled red, smaller, italic and bold._
 
 ---
 
-![The front-end markup, showing the span inside the existing heading element (may differ for your own theme).](https://raw.github.com/GaryJones/Visual-Subtitle/master/screenshot-3.png)  
+![The front-end markup, showing the span inside the existing heading element (may differ for your own theme).](https://raw.github.com/GaryJones/Visual-Subtitle/master/assets-wp-repo/screenshot-3.png)  
 _The front-end markup, showing the span inside the existing heading element (may differ for your own theme)._
 
 ---
 
-![Showing the subtitle in the Posts list - the second entry has no subtitle.](https://raw.github.com/GaryJones/Visual-Subtitle/master/screenshot-4.png)  
+![Showing the subtitle in the Posts list - the second entry has no subtitle.](https://raw.github.com/GaryJones/Visual-Subtitle/master/assets-wp-repo/screenshot-4.png)  
 _Showing the subtitle in the Posts list - the second entry has no subtitle._
 
 ---
 
-![The subtitle can also be amended from the quick edit feature.](https://raw.github.com/GaryJones/Visual-Subtitle/master/screenshot-5.png)  
+![The subtitle can also be amended from the quick edit feature.](https://raw.github.com/GaryJones/Visual-Subtitle/master/assets-wp-repo/screenshot-5.png)  
 _The subtitle can also be amended from the quick edit feature._
 
 ## Credits

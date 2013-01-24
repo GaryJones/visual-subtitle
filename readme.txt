@@ -2,9 +2,9 @@
 Contributors: GaryJ
 Donate link: http://code.garyjones.co.uk/donate/
 Tags: subtitle
-Requires at least: 3.5
-Tested up to: 3.5
-Stable tag: 1.0.1
+Requires at least: 2.9.0
+Tested up to: 3.5.0
+Stable tag: 1.1.0
 
 Allows part of a post title to be styled as a subtitle. It is still within the title heading, but is wrapped in a span to be styled differently.
 
@@ -45,6 +45,11 @@ You need to add the `.subtitle { display: block; }` style to your own theme, alo
 
 == Changelog ==
 
+= 1.1.0 =
+* Reposition subtitle field to after title.
+* Add ability for developers to choose which post types have visual subtitle support.
+* Code tidy-up
+
 = 1.0.1 =
 * Fixed display issue on Comments page.
 * Added key bit of code that makes the plugin read translation files (props to [Dave](http://deckerweb.de/) for the reminder).
@@ -54,6 +59,9 @@ You need to add the `.subtitle { display: block; }` style to your own theme, alo
 * First public version.
 
 == Upgrade Notice ==
+
+= 1.1.0 =
+Reposition subtitle field, improvements for developers.
 
 = 1.0.1 =
 Minor fix - make plugin translatable, and fix small display issue on Comments page.
