@@ -32,14 +32,17 @@ Then go to your Plugins screen and click __Activate__.
 
 This plugin adds a Visual Subtitle field to all post, page and custom post types that have support for a title.
 
-It allows you to include a string of text that will still be part of the post title, but be wrapped in a `span` tag, giving something like:
+In a future version, this plugin may include a user interface with a list of checkboxes, so users can deselect which post type visual subtitle is applied to.
 
-`<h1>Visual Subtitle<span class="subtitle"></span></h1>`
+Those comfortable with code can filter the indexed array of post types via the `visual_subtitle_supported_types` filter.
+
+The plugin allows you to include a string of text that will still be part of the post title, but be wrapped in a `small` tag, giving something like:
+
+`<h1>Main Title<small class="subtitle">This is a subtitle</small></h1>`
 
 Keeping it as part of the main level 1 or two heading, means it maintains as much keyword SEO importance as the main title, yet can be given a style (in your own theme) of `display: block;` to make it visually appear as a subtitle.
 
-The visual subtitle is appended to to the title on on the Posts screen, separated with a pipe (`|`) character, and appended to the title part of the document title with a colon (`:`) character.
-If you're using a theme or plugin that allows for custom document titles different to the post title
+The visual subtitle is appended to to the title on on the Posts screen, with the markup `<small class="visual-subtitle">...</small>`, and appended to the title part of the document title with a filterable colon and space (`: `) characters.
 
 ## Screenshots
 
