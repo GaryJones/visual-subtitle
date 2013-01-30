@@ -18,7 +18,7 @@ Allows part of a post title to be styled as a subtitle. It is still within the t
 3. Copy the folder to your `/wp-content/plugins/` directory.
 4. Go to the Plugins screen and click __Activate__.
 
-Check out the Codex for more information [installing plugins manually](http://codex.wordpress.org/Managing_Plugins#Manual_Plugin_Installation).
+Check out the Codex for more information about [installing plugins manually](http://codex.wordpress.org/Managing_Plugins#Manual_Plugin_Installation).
 
 ### Git
 
