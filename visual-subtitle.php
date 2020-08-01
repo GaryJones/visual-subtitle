@@ -6,13 +6,13 @@
  * @author  Gary Jones
  * @license GPL-2.0-or-later
  * @link    https://github.com/GaryJones/visual-subtitle
- * @version 1.1.0
+ * @version 1.2.0
  *
  * @wordpress-plugin
  * Plugin Name: Visual Subtitle
  * Plugin URI: https://github.com/GaryJones/visual-subtitle
  * Description: Allows part of a post title to be styled as a subtitle. The subtitle is still within the title level 1 or 2 heading, but is wrapped in a <code>span</code> to be styled differently.
- * Version: 1.1.0
+ * Version: 1.2.0
  * Author: Gary Jones
  * Author URI: https://garyjones.io/
  * License: GPL-2.0-or-later
