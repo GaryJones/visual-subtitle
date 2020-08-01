@@ -46,27 +46,27 @@ The visual subtitle is appended to to the title on on the Posts screen, with a `
 
 ## Screenshots
 
-![The back-end interface, showing the Visual Subtitle field.](https://raw.github.com/GaryJones/Visual-Subtitle/master/assets-wp-repo/screenshot-1.png)  
+![The back-end interface, showing the Visual Subtitle field.](https://raw.github.com/GaryJones/Visual-Subtitle/develop/.wordpress-org/screenshot-1.png)  
 _The back-end interface, showing the Visual Subtitle field._
 
 ---
 
-![Showing the visual subtitle on the front-end, in this case, styled red, smaller, italic and bold.](https://raw.github.com/GaryJones/Visual-Subtitle/master/assets-wp-repo/screenshot-2.png)  
+![Showing the visual subtitle on the front-end, in this case, styled red, smaller, italic and bold.](https://raw.github.com/GaryJones/Visual-Subtitle/develop/.wordpress-org/screenshot-2.png)  
 _Showing the visual subtitle on the front-end, in this case, styled red, smaller, italic and bold._
 
 ---
 
-![The front-end markup, showing the span inside the existing heading element (may differ for your own theme).](https://raw.github.com/GaryJones/Visual-Subtitle/master/assets-wp-repo/screenshot-3.png)  
+![The front-end markup, showing the span inside the existing heading element (may differ for your own theme).](https://raw.github.com/GaryJones/Visual-Subtitle/develop/.wordpress-org/screenshot-3.png)  
 _The front-end markup, showing the span inside the existing heading element (may differ for your own theme)._
 
 ---
 
-![Showing the subtitle in the Posts list - the second entry has no subtitle.](https://raw.github.com/GaryJones/Visual-Subtitle/master/assets-wp-repo/screenshot-4.png)  
+![Showing the subtitle in the Posts list - the second entry has no subtitle.](https://raw.github.com/GaryJones/Visual-Subtitle/develop/.wordpress-org/screenshot-4.png)  
 _Showing the subtitle in the Posts list - the second entry has no subtitle._
 
 ---
 
-![The subtitle can also be amended from the quick edit feature.](https://raw.github.com/GaryJones/Visual-Subtitle/master/assets-wp-repo/screenshot-5.png)  
+![The subtitle can also be amended from the quick edit feature.](https://raw.github.com/GaryJones/Visual-Subtitle/develop/.wordpress-org/screenshot-5.png)  
 _The subtitle can also be amended from the quick edit feature._
 
 ## Credits
