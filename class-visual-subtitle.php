@@ -3,9 +3,9 @@
  * Visual Subtitle plugin.
  *
  * @package GaryJones\VisualSubtitle
- * @author  Gary Jones <gary@garyjones.co.uk>
- * @license GPL-2.0+
- * @link    http://code.garyjones.co.uk/plugins/visual-subtitle/
+ * @author  Gary Jones
+ * @license GPL-2.0-or-later
+ * @link    https://github.com/GaryJones/visual-subtitle
  */
 
 /**
@@ -21,12 +21,12 @@ class Visual_Subtitle {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @link http://core.trac.wordpress.org/attachment/ticket/16149/query-standard-format-posts.php
-	 * @link http://twitter.com/#!/markjaquith/status/66862769030438912
+	 * @link https://core.trac.wordpress.org/attachment/ticket/16149/query-standard-format-posts.php
+	 * @link https://twitter.com/markjaquith/status/66862769030438912
 	 *
 	 * @var Visual_Subtitle
 	 */
-	static $instance;
+	public static $instance;
 
 	/**
 	 * The name of the meta field key to which the postmeta is saved.
@@ -57,9 +57,6 @@ class Visual_Subtitle {
 
 		/** Announce that the class is ready, and pass the object (for advanced use) */
 		do_action_ref_array( 'visual_subtitle_init', array( &$this ) );
-
-		add_action( 'init', array( $this, 'localization' ) );
-		add_action( 'init', array( $this, 'init' ) );
 	}
 
 	/**
@@ -89,16 +86,16 @@ class Visual_Subtitle {
 	 * @see Visual_Subtitle::style()
 	 */
 	public function init() {
-		//if( post_type_supports( get_post_type(), 'title' ) ) {
-			add_action( 'edit_form_after_title', array( $this, 'field' ) );
-		//}
-		add_action( 'admin_init',             array( $this, 'add_field' ) );
-		add_action( 'save_post',              array( $this, 'save' ), 1, 2 );
-		add_action( 'quick_edit_custom_box',  array( $this, 'quick_edit' ), 10, 2 );
-		add_filter( 'the_title',              array( $this, 'filter' ), 10, 2 );
-		add_filter( 'wp_title',               array( $this, 'doctitle_filter' ) );
-		add_action( 'admin_enqueue_scripts',  array( $this, 'script' ) );
-		add_action( 'admin_enqueue_scripts',  array( $this, 'style' ) );
+		$this->localization();
+
+		add_action( 'edit_form_after_title', array( $this, 'field' ) );
+		add_action( 'admin_init', array( $this, 'add_field' ) );
+		add_action( 'save_post', array( $this, 'save' ), 1, 2 );
+		add_action( 'quick_edit_custom_box', array( $this, 'quick_edit' ), 10, 2 );
+		add_filter( 'the_title', array( $this, 'filter' ), 10, 2 );
+		add_filter( 'wp_title', array( $this, 'doctitle_filter' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'script' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'style' ) );
 	}
 
 	/**
@@ -110,12 +107,12 @@ class Visual_Subtitle {
 	public function add_field() {
 		foreach ( get_post_types() as $post_type ) {
 			if ( $this->has_support( $post_type ) ) {
-				// Posts
-				add_filter( 'manage_posts_columns',       array( $this, 'columns' ) );
-				add_filter( 'manage_posts_custom_column', array( $this, 'custom_column' ), 10, 2 );
-				// Pages
-				add_filter( 'manage_pages_columns',       array( $this, 'columns' ) );
-				add_filter( 'manage_pages_custom_column', array( $this, 'custom_column' ), 10, 2 );
+				// Posts.
+				add_filter( 'manage_posts_columns', array( $this, 'columns' ) );
+				add_action( 'manage_posts_custom_column', array( $this, 'custom_column' ), 10, 2 );
+				// Pages.
+				add_filter( 'manage_pages_columns', array( $this, 'columns' ) );
+				add_action( 'manage_pages_custom_column', array( $this, 'custom_column' ), 10, 2 );
 			}
 		}
 	}
@@ -127,15 +124,15 @@ class Visual_Subtitle {
 	 */
 	public function field() {
 		$subtitle = $this->get_subtitle();
-		$label    = __(  'Enter visual subtitle here', 'visual-subtitle' );
+		$label    = __( 'Enter visual subtitle here', 'visual-subtitle' );
 		$label    = apply_filters( 'visual_subtitle_prompt_text', $label );
 		?>
 		<div class="visual-subtitle-wrap">
 			<?php
 			wp_nonce_field( plugin_basename( __FILE__ ), $this->nonce );
 			?>
-			<label for="visual-subtitle" class="screen-reader-text" id="visual-subtitle-prompt-text"><?php echo $label; ?></label>
-			<input type="text" id="visual-subtitle" name="<?php echo esc_attr( $this->meta_field ); ?>" class="large-text" value="<?php echo esc_attr( $subtitle ); ?>" aria-labelledby="visual-subtitle-prompt-text" />
+			<label for="visual-subtitle" class="screen-reader-text"><?php echo esc_html( $label ); ?></label>
+			<input type="text" id="visual-subtitle" name="<?php echo esc_attr( $this->meta_field ); ?>" class="large-text" value="<?php echo esc_attr( $subtitle ); ?>" />
 		</div>
 		<?php
 	}
@@ -148,11 +145,13 @@ class Visual_Subtitle {
 	 * @todo Limit to Edit screen, or index screen
 	 */
 	public function script() {
-//		global $current_screen;
-//
-//		if ( ($current_screen->base != 'edit') )
-//			return;
-		wp_enqueue_script( 'visual-subtitle', plugin_dir_url(__FILE__) .'js/visual-subtitle.js', array( 'jquery', 'post' ), '1.1.0', true );
+		wp_enqueue_script(
+			'visual-subtitle',
+			plugin_dir_url( __FILE__ ) . 'js/visual-subtitle.js',
+			array( 'jquery', 'post' ),
+			'1.2.0',
+			true
+		);
 	}
 
 	/**
@@ -163,7 +162,12 @@ class Visual_Subtitle {
 	 * @todo Limit to just the screens that need styles.
 	 */
 	public function style() {
-		wp_enqueue_style( 'visual-subtitle', plugin_dir_url(__FILE__) .'css/visual-subtitle.css', array(), '1.1.0' );
+		wp_enqueue_style(
+			'visual-subtitle',
+			plugin_dir_url( __FILE__ ) . 'css/visual-subtitle.css',
+			array(),
+			'1.2.0'
+		);
 	}
 
 	/**
@@ -171,32 +175,38 @@ class Visual_Subtitle {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string  $post_id
-	 * @param WP_Post $post
-	 *
+	 * @param string  $post_id Post ID.
+	 * @param WP_Post $post    Post object.
 	 * @return integer
 	 */
 	public function save( $post_id, $post ) {
 
-		//	Verify the nonce
-		if ( ! isset( $_POST[$this->nonce] ) || ! wp_verify_nonce( $_POST[$this->nonce], plugin_basename( __FILE__ ) ) )
+		// Verify the nonce.
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Nonce doesn't need to be sanitized.
+		if ( ! isset( $_POST[ $this->nonce ] ) || ! wp_verify_nonce( $_POST[ $this->nonce ], plugin_basename( __FILE__ ) ) ) {
 			return $post->ID;
+		}
 
-		//	Don't try to save the data under autosave, or future post (we do allow ajax, for quick edit)
-		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
+		// Don't try to save the data under autosave, or future post (we do allow ajax, for quick edit).
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
 			return $post->ID;
-		if ( defined( 'DOING_CRON' ) && DOING_CRON )
-			return $post->ID;
+		}
 
-		// Check permissions
-		if ( ( 'page' == $_POST['post_type'] && ! current_user_can( 'edit_page', $post->ID ) ) || ! current_user_can( 'edit_post', $post->ID ) )
+		if ( defined( 'DOING_CRON' ) && DOING_CRON ) {
 			return $post->ID;
+		}
+
+		// Check permissions.
+		if ( isset( $_POST['post_type'] ) && 'page' === $_POST['post_type'] && ! current_user_can( 'edit_page', $post->ID ) || ! current_user_can( 'edit_post', $post->ID ) ) {
+			return $post->ID;
+		}
 
 		// Save (or delete) the value.
-		if ( isset( $_POST[$this->meta_field] ) )
-			update_post_meta( $post_id, $this->meta_field, $_POST[$this->meta_field] );
-		else
+		if ( isset( $_POST[ $this->meta_field ] ) ) {
+			update_post_meta( $post_id, $this->meta_field, sanitize_text_field( $_POST[ $this->meta_field ] ) );
+		} else {
 			delete_post_meta( $post_id, $this->meta_field );
+		}
 
 	}
 
@@ -209,11 +219,11 @@ class Visual_Subtitle {
 	 * @since 1.0.0
 	 *
 	 * @param array $columns Existing post / page columns.
-	 *
 	 * @return array Amended post / page coulumns.
 	 */
 	public function columns( $columns ) {
 		$columns['visual-subtitle'] = __( 'Subtitle', 'visual-subtitle' );
+
 		return $columns;
 	}
 
@@ -226,17 +236,16 @@ class Visual_Subtitle {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string  $name Column name.
-	 * @param integer $id Post ID
-	 *
+	 * @param string $name Column name.
+	 * @param int    $id Post ID.
 	 * @return null Returns early if the column name is incorrect.
 	 */
 	public function custom_column( $name, $id ) {
-
-		if ( 'visual-subtitle' != $name )
+		if ( 'visual-subtitle' !== $name ) {
 			return;
+		}
 
-		echo '<span id="inline_' . $id . '_visual_subtitle">' . esc_html( get_post_meta( $id, $this->meta_field, true ) ) . '</span>';
+		echo '<span id="inline_' . esc_attr( $id ) . '_visual_subtitle">' . esc_html( get_post_meta( $id, $this->meta_field, true ) ) . '</span>';
 
 	}
 
@@ -247,15 +256,15 @@ class Visual_Subtitle {
 	 *
 	 * @global stdClass $post
 	 *
-	 * @param string $column_name
-	 * @param string $post_type
-	 *
+	 * @param string $column_name Column name.
+	 * @param string $post_type   Post type.
 	 * @return null Returns early if the column name is incorrect
 	 */
 	public function quick_edit( $column_name, $post_type ) {
 
-		if( 'visual-subtitle' != $column_name )
+		if ( 'visual-subtitle' !== $column_name ) {
 			return;
+		}
 
 		global $post;
 
@@ -264,7 +273,7 @@ class Visual_Subtitle {
 			<div class="inline-edit-col">
 				<?php wp_nonce_field( plugin_basename( __FILE__ ), $this->nonce ); ?>
 				<label>
-					<span class="title"><?php _e( 'Subtitle', 'visual-subtitle' ); ?></span>
+					<span class="title"><?php esc_html_e( 'Subtitle', 'visual-subtitle' ); ?></span>
 					<span class="input-text-wrap">
 						<input type="text" id="post_subtitle" name="_visual-subtitle" value="<?php echo esc_attr( $this->get_subtitle() ); ?>" />
 					</span>
@@ -282,9 +291,8 @@ class Visual_Subtitle {
 	 *
 	 * @global string $current_screen
 	 *
-	 * @param string  $title
-	 * @param integer $id
-	 *
+	 * @param string  $title Post title.
+	 * @param integer $id    Post ID.
 	 * @return string
 	 */
 	public function filter( $title, $id ) {
@@ -300,9 +308,10 @@ class Visual_Subtitle {
 			// Can't use <small> here as the title is escaped on post type index
 			// and added to the anchor title attribute. Sad panda.
 			$title = $title . ' | ' . $subtitle;
-		} else { // front-end
+		} else { // Front end.
 			$title = $title . ' <small class="subtitle">' . $subtitle . '</small>';
 		}
+
 		return $title;
 	}
 
@@ -311,10 +320,7 @@ class Visual_Subtitle {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string $title
-	 * @param string $sep
-	 * @param string $seplocation
-	 * 
+	 * @param string $title       Document title.
 	 * @return string
 	 */
 	public function doctitle_filter( $title ) {
@@ -349,6 +355,7 @@ class Visual_Subtitle {
 			}
 			$post_id = $post->ID;
 		}
+
 		return get_post_meta( $post_id, $this->meta_field, true );
 	}
 	
@@ -360,12 +367,14 @@ class Visual_Subtitle {
 	 * @uses Visual_Subtitle::get_supported_types() Get list of post types that 
 	 * visual subtitle should be used with.
 	 * 
+	 * @param string $post_type Post type.
 	 * @return bool True is visual subtitle should be used, false if not.
 	 */
 	protected function has_support( $post_type ) {
 		if ( in_array( $post_type, $this->get_supported_types() ) ) {
 			return true;
 		}
+
 		return false;
 	}
 	
@@ -384,7 +393,8 @@ class Visual_Subtitle {
 	 */
 	protected function get_supported_types() {
 		$supported_types = array();
-		$saved_settings = get_option( 'visual-subtitle' );
+		$saved_settings  = get_option( 'visual-subtitle' );
+
 		// Check for saved options.
 		if ( $saved_settings && isset( $saved_settings['supported_types'] ) ) {
 			$supported_types = $saved_settings['supported_types'];
@@ -392,10 +402,11 @@ class Visual_Subtitle {
 			// No options found, so default to post types that support title.
 			foreach ( get_post_types() as $post_type ) {
 				if ( post_type_supports( $post_type, 'title' ) ) {
-				$supported_types[] = $post_type;
+					$supported_types[] = $post_type;
 				}
 			}
 		}
+
 		return apply_filters( 'visual_subtitle_supported_types', $supported_types );
 	}
 }

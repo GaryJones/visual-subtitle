@@ -3,14 +3,15 @@ Contributors: GaryJ
 Donate link: http://code.garyjones.co.uk/donate/
 Tags: subtitle
 Requires at least: 2.9.0
-Tested up to: 3.5.0
+Requires PHP: 5.6
+Tested up to: 5.5.0
 Stable tag: 1.1.0
 
 Allows part of a post title to be styled as a subtitle. It is still within the title heading, but is wrapped in a span to be styled differently.
 
 == Description ==
 
-This plugin adds a Visual Subtitle field to all post, page and custom post types that have support for a title.
+This plugin adds a Visual Subtitle field to all post, page and custom post types that have support for a title, and that use the Classic Editor. It doesn't work with the Block Editor.
 
 It allows you to include a string of text that will still be part of the post title, but be wrapped in a `span` tag, giving something like:
 

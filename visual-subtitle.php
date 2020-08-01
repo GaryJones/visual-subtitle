@@ -19,6 +19,15 @@
  * Text Domain: visual-subtitle
  */
 
+/**
+ * Require the main class file.
+ */
 require plugin_dir_path( __FILE__ ) . 'class-visual-subtitle.php';
 
-$visual_subtitle = new Visual_Subtitle;
+add_action(
+	'init',
+	function () {
+		$visual_subtitle = new Visual_Subtitle();
+		$visual_subtitle->init();
+	}
+);
