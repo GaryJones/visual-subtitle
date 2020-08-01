@@ -30,7 +30,7 @@ Then go to your Plugins screen and click __Activate__.
 
 ## Description 
 
-This plugin adds a Visual Subtitle field to all post, page and custom post types that have support for a title.
+This plugin adds a Visual Subtitle field to all post, page and custom post types that have support for a title, using the Classic Editor. It doesn't work with the Block Editor.
 
 In a future version, this plugin may include a user interface with a list of checkboxes, so users can deselect which post types visual subtitle is applied to.
 
@@ -72,4 +72,4 @@ _The subtitle can also be amended from the quick edit feature._
 ## Credits
 
 Built by [Gary Jones](https://twitter.com/GaryJ)  
-Copyright 2013 [Gamajo Tech](http://gamajo.com/)
+Copyright 2013 [Gary Jones](https://garyjones.io/)
